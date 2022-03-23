@@ -26,4 +26,11 @@ from pyPRISM.closure.MartynovSarkisov import MartynovSarkisov
 from pyPRISM.closure.MartynovSarkisov import MS
 
 from pyPRISM.closure.ReferenceMolecularPercusYevick import ReferenceMolecularPercusYevick
+from pyPRISM.closure.ReferenceMolecularPercusYevick import RMPY
+
+from pyPRISM.closure.ReferenceMolecularMeanSphericalApproximation import ReferenceMolecularMeanSphericalApproximation
+from pyPRISM.closure.ReferenceMolecularMeanSphericalApproximation import RMMSA
+
+from pyPRISM.closure.ReferenceLariaWuChandler import ReferenceLariaWuChandler
+from pyPRISM.closure.ReferenceLariaWuChandler import RLWC
 

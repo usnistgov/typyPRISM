@@ -19,3 +19,6 @@ from pyPRISM.calculate.second_virial       import second_virial
 from pyPRISM.calculate.pmf                 import pmf
 from pyPRISM.calculate.chi                 import chi
 from pyPRISM.calculate.spinodal_condition  import spinodal_condition
+from pyPRISM.calculate.initial_guess       import initial_guess
+from pyPRISM.calculate.refDirectCorr       import refDirectCorr
+from pyPRISM.calculate.refTotalCorr        import refTotalCorr

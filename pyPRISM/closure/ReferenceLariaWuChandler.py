@@ -9,7 +9,7 @@ from scipy.signal import fftconvolve
 import numpy as np
 from numpy import inf
 
-class ReferenceMolecularPercusYevick(MolecularClosure):
+class ReferenceLariaWuChandler(MolecularClosure):
     r'''Reference Molecular Percus Yevick (R-MPY) closure
 
     .. warning::
@@ -67,7 +67,7 @@ class ReferenceMolecularPercusYevick(MolecularClosure):
     def __init__(self,apply_hard_core=False):
         #raise NotImplementedError('Molecular closures are untested and not fully implemented.')
         
-        self.name = "RMPY"
+        self.name = "RLWC"
         self.potential = None
         self.value = None
         self.sigma = None
@@ -100,17 +100,16 @@ class ReferenceMolecularPercusYevick(MolecularClosure):
         assert len(gamma) == len(self.potential),'Domain mismatch!'
 
         hr = Domain.to_real(domain,array=hk)
+        hr0 = Domain.to_real(domain,array=hk0)
 
         potential_calculation = self.potential #we need to set the potential for r<=sigma equal to 0 for the fft to work correctly
 
         mask = r<=self.sigma
         potential_calculation[mask]=0.0
 
-        exp_potential_r = np.exp(potential_calculation)
-        exp_potential_r = (1.0-exp_potential_r)*(hr+1.0)
-        exp_potential_k = Domain.to_fourier(domain,array=exp_potential_r)
-        exp_potential_k = omega_k_i*exp_potential_k*omega_k_j
-        exp_potential_r = Domain.to_real(domain,array=exp_potential_k)
+        potential_k = Domain.to_fourier(domain,array=potential_calculation)
+        convoluted_potential_k = omega_k_i*potential_k*omega_k_j
+        convoluted_potential_r = Domain.to_real(domain,array=convoluted_potential_k)
 
         cr0_k = Domain.to_fourier(domain,array=cr0)        
         convoluted_cr0_k = omega_k_i*cr0_k*omega_k_j
@@ -124,15 +123,15 @@ class ReferenceMolecularPercusYevick(MolecularClosure):
             mask = r>self.sigma
             
             # self.value is the convoluted c(r)
-            self.value[mask] = convoluted_cr0[mask] + exp_potential_r[mask]
+            self.value[mask] = (hr0[mask]+1.0)*np.exp(convoluted_cr0[mask]-convoluted_potential_r[mask]+gamma[mask]-hr0[mask])-1.0-gamma[mask]
 
         else:
            # self.value is the convoluted c(r)
 
-            self.value = convoluted_cr0 + exp_potential_r
+            self.value = (hr0+1.0)*np.exp(convoluted_cr0-convoluted_potential_r+gamma-hr0)-1.0-gamma
         
         return self.value
 
-class RMPY(ReferenceMolecularPercusYevick):
-    '''Alias of ReferenceMolecularPercusYevick'''
+class RLWC(ReferenceLariaWuChandler):
+    '''Alias of ReferenceLariaWuChandler'''
     pass
